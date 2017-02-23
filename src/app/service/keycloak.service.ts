@@ -1,12 +1,15 @@
 import { Injectable } from "@angular/core";
-import * as Keycloak from 'keycloak-js';
+
 
 declare var Keycloak: any;
 
 @Injectable()
 export class KeycloakService {
     static auth: any = {};
-
+    
+    /**
+     * Método de inicialização da segurança.
+     */
     static init(): Promise<any> {
         let keycloak = Keycloak('keycloak/keycloak.json');
         KeycloakService.auth.loggedIn = false;
@@ -43,7 +46,10 @@ export class KeycloakService {
                 });
         });
     }
-
+    
+    /**
+     * Método de logout
+     */
     logout() {
         console.log('*** LOGOUT');
         KeycloakService.auth.loggedIn = false;
@@ -64,5 +70,15 @@ export class KeycloakService {
                     });
             }
         });
+    }
+
+    getLoadUserInfo(){
+        console.log('---------------------------------------');
+        console.log(KeycloakService.auth.authz.loadUserProfile());
+        // return new Promise((resolve, reject)=>{
+        //     KeycloakService.auth.authz.loadUserProfile()
+        //         .success(()=>{resolve();})
+        //         .error();
+        // });
     }
 }

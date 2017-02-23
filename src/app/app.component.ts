@@ -14,4 +14,8 @@ export class AppComponent {
   logout(){
     this.kc.logout();
   }
+
+  loadUserInfo(){
+    this.kc.getLoadUserInfo();
+  }
 }

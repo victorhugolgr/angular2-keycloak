@@ -9,6 +9,7 @@ import { environment } from './environments/environment';
 
 import { KeycloakService } from './app/service/keycloak.service';
 
+
 if (environment.production) {
   enableProdMode();
 }

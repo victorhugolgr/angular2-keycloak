@@ -73,12 +73,10 @@ export class KeycloakService {
     }
 
     getLoadUserInfo(){
-        console.log('---------------------------------------');
-        console.log(KeycloakService.auth.authz.loadUserProfile());
-        // return new Promise((resolve, reject)=>{
-        //     KeycloakService.auth.authz.loadUserProfile()
-        //         .success(()=>{resolve();})
-        //         .error();
-        // });
+        KeycloakService.auth.authz.loadUserInfo().success(function(userInfo) {
+            console.log(userInfo);
+        }).error(function() {
+            console.log('Failed to load user info');
+        })
     }
 }

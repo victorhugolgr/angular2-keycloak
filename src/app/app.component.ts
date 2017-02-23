@@ -1,3 +1,4 @@
+import { Http } from '@angular/http';
 import { KeycloakService } from './service/keycloak.service';
 import { Component } from '@angular/core';
 
@@ -9,7 +10,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'app works!';
 
-  constructor(private kc : KeycloakService){}
+  constructor(private http : Http,private kc : KeycloakService){}
 
   logout(){
     this.kc.logout();
@@ -17,5 +18,10 @@ export class AppComponent {
 
   loadUserInfo(){
     this.kc.getLoadUserInfo();
+  }
+
+  getServiceRest(){
+    this.http.get('http://10.13.29.43:8091/api/mngt/info')
+      .subscribe(()=>{console.log('Rest consultado')});
   }
 }

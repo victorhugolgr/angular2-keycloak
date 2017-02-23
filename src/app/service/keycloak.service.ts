@@ -19,7 +19,7 @@ export class KeycloakService {
                 .success(() => {
                     KeycloakService.auth.loggedIn = true;
                     KeycloakService.auth.authz = keycloak;
-                    KeycloakService.auth.logoutUrl = keycloak.authServerUrl + "/realms/TRE/protocol/openid-connect/logout?redirect_uri=http://localhost:4200";
+                    KeycloakService.auth.logoutUrl = keycloak.authServerUrl + "/realms/TRE/protocol/openid-connect/logout?redirect_uri=http://10.13.29.43:4200";
 
                     // refresh login
                     setInterval(function () {

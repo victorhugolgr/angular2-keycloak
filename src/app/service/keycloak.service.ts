@@ -1,48 +1,68 @@
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
+import * as Keycloak from 'keycloak-js';
 
 declare var Keycloak: any;
 
 @Injectable()
 export class KeycloakService {
-  static auth: any = {};
+    static auth: any = {};
 
-  static init(): Promise<any> {
-    let keycloakAuth: any = new Keycloak('keycloak.json');
-    KeycloakService.auth.loggedIn = false;
+    static init(): Promise<any> {
+        let keycloak = Keycloak('keycloak/keycloak.json');
+        KeycloakService.auth.loggedIn = false;
 
-      return new Promise((resolve, reject) => {
-        keycloakAuth.init({ onLoad: 'login-required' })
-          .success(() => {
-            KeycloakService.auth.loggedIn = true;
-            KeycloakService.auth.authz = keycloakAuth;
-            KeycloakService.auth.logoutUrl = keycloakAuth.authServerUrl + "/realms/TRE/protocol/openid-connect/logout?redirect_uri=http://localhost:3000";
-            resolve();
-          })
-          .error(() => {
-            reject();
-          });
-      });
+        return new Promise((resolve, reject) => {
+            keycloak.init({ onLoad: 'login-required' })
+                .success(() => {
+                    KeycloakService.auth.loggedIn = true;
+                    KeycloakService.auth.authz = keycloak;
+                    KeycloakService.auth.logoutUrl = keycloak.authServerUrl + "/realms/TRE/protocol/openid-connect/logout?redirect_uri=http://localhost:4200";
+
+                    // refresh login
+                    setInterval(function () {
+
+                        keycloak.updateToken(70).success(function (refreshed) {
+                            if (refreshed) {
+                                console.log('Token refreshed');
+                            } else {
+                                console.log('Token not refreshed, valid for '
+                                    + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+                            }
+                        }).error(function () {
+                            console.error('Failed to refresh token');
+                        });
+
+                    }, 60000);
+
+                    console.log("Loading...");
+
+                    resolve();
+                })
+                .error(() => {
+                    reject();
+                });
+        });
     }
 
-  logout() {
-    console.log('*** LOGOUT');
-    KeycloakService.auth.loggedIn = false;
-    KeycloakService.auth.authz = null;
+    logout() {
+        console.log('*** LOGOUT');
+        KeycloakService.auth.loggedIn = false;
+        KeycloakService.auth.authz = null;
 
-    window.location.href = KeycloakService.auth.logoutUrl;
-  }
+        window.location.href = KeycloakService.auth.logoutUrl;
+    }
 
-  getToken(): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      if (KeycloakService.auth.authz.token) {
-        KeycloakService.auth.authz.updateToken(5)
-          .success(() => {
-            resolve(<string>KeycloakService.auth.authz.token);
-          })
-          .error(() => {
-            reject('Failed to refresh token');
-          });
-      }
-    });
-  }
+    getToken(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            if (KeycloakService.auth.authz.token) {
+                KeycloakService.auth.authz.updateToken(5)
+                    .success(() => {
+                        resolve(<string>KeycloakService.auth.authz.token);
+                    })
+                    .error(() => {
+                        reject('Failed to refresh token');
+                    });
+            }
+        });
+    }
 }

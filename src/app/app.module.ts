@@ -1,24 +1,21 @@
-import { Http } from '@angular/http';
 import { HttpService } from './service/http.service';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule,XHRBackend,RequestOptions } from '@angular/http';
-
-import { AppComponent } from './app.component';
 import { KeycloakService } from './service/keycloak.service';
+import {NgModule} from "@angular/core";
+import {BrowserModule} from "@angular/platform-browser";
+import {HttpModule, Http, XHRBackend, RequestOptions} from '@angular/http';
+
+import {AppComponent} from "./app.component";
 
 @NgModule({
+  imports: [
+    BrowserModule,
+    HttpModule
+  ],
   declarations: [
     AppComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpModule
-  ],
-  providers: [KeycloakService,
-
+  providers: [
+    KeycloakService,
     {
       provide: Http,
       useFactory:
@@ -28,7 +25,8 @@ import { KeycloakService } from './service/keycloak.service';
         keycloakService: KeycloakService
       ) => new HttpService(backend, defaultOptions, keycloakService),
       deps: [XHRBackend, RequestOptions, KeycloakService]
-    }],
-  bootstrap: [AppComponent]
+    }
+  ],
+  bootstrap: [ AppComponent ]
 })
-export class AppModule { }
+export class AppModule {}

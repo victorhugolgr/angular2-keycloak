@@ -21,7 +21,16 @@ export class AppComponent {
   }
 
   getServiceRest(){
-    this.http.get('http://10.13.29.43:8091/api/mngt/info')
+    this.http.get('http://localhost:8091/api/mngt/info')
       .subscribe(()=>{console.log('Rest consultado')});
+  }
+
+  getServiceRestPublic(){
+    this.http.get('http://localhost:8091/api/info')
+      .subscribe(()=>{console.log('Rest consultado')});
+  }
+
+  getToken(){
+    this.kc.getToken().then((token)=>console.log(token));
   }
 }

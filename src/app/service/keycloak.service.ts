@@ -6,9 +6,10 @@ declare var Keycloak: any;
 @Injectable()
 export class KeycloakService {
     static auth: any = {};
-    
+
     /**
      * Método de inicialização da segurança.
+     * Inicializa o timer para atualização do token
      */
     static init(): Promise<any> {
         let keycloak = Keycloak('keycloak/keycloak.json');
@@ -46,7 +47,7 @@ export class KeycloakService {
                 });
         });
     }
-    
+
     /**
      * Método de logout
      */
@@ -58,6 +59,9 @@ export class KeycloakService {
         window.location.href = KeycloakService.auth.logoutUrl;
     }
 
+    /**
+     * Captura o token
+     */
     getToken(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             if (KeycloakService.auth.authz.token) {
@@ -72,11 +76,22 @@ export class KeycloakService {
         });
     }
 
-    getLoadUserInfo(){
-        KeycloakService.auth.authz.loadUserInfo().success(function(userInfo) {
+    /**
+     * Retorna as informações do usuário
+     */
+    getLoadUserInfo() {
+        KeycloakService.auth.authz.loadUserInfo().success(function (userInfo) {
             console.log(userInfo);
-        }).error(function() {
+        }).error(function () {
             console.log('Failed to load user info');
         })
+    }
+
+    /**
+     * Verifica se o usuário possui a regra informada.
+     * @param role Regra a pesquisar
+     */
+    getHasResourceRole(role: string) {
+        console.log(KeycloakService.auth.authz.hasResourceRole(role, 'spring-boot'));
     }
 }
